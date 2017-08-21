@@ -28,12 +28,24 @@ class Model():
         else:
             raise Exception('model type not supported: {}'.format(args.model))
 
-        if args.model == 'bn-lstm':
-            cell = cell_fn(args.rnn_size, self.is_training)
-        else:
-            cell = cell_fn(args.rnn_size)
+            
+        #if args.model == 'bn-lstm':
+         #   cell = cell_fn(args.rnn_size, self.is_training)
+        #else:
+         #   cell = cell_fn(args.rnn_size)
 
-        self.cell = cell = rnn.MultiRNNCell([cell] * args.num_layers)
+        #self.cell = cell = rnn.MultiRNNCell([cell] * args.num_layers)
+        
+        cells=[]
+        for _ in range(args.num_layers):
+            if args.model == 'bn-lstm':
+                cell = cell_fn(args.rnn_size, self.is_training)
+            else:
+                cell = cell_fn(args.rnn_size)
+            
+            cells.append(cell)
+        self.cell = cell = rnn.MultiRNNCell(cells, state_is_tuple=True)
+        
 
         self.input_data = tf.placeholder(tf.int64, [None, args.seq_length])
         # self.targets = tf.placeholder(tf.int64, [None, args.seq_length])  # seq2seq model

@@ -1,11 +1,13 @@
-#!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python
 
 import os, sys
 import time
 import csv
 import collections
-import cPickle as pickle
+# import cPickle as pickle
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -26,16 +28,18 @@ class TextLoader(object):
             label_file = os.path.join(utils_dir, 'labels.pkl')
             vocab_file = os.path.join(utils_dir, 'vocab.pkl')
             corpus_file = os.path.join(utils_dir, 'corpus.txt')
-
-            with open(label_file, 'r') as f:
+            print('label_file: {}'.format(label_file))
+            
+            with open(label_file, 'rb') as f:
+                print('label_file type: {}'.format(type(f)))
                 self.labels = pickle.load(f)
             self.label_size = len(self.labels)
 
             if not os.path.exists(vocab_file):
-                print 'reading corpus and processing data'
+                print('reading corpus and processing data')
                 self.preprocess(vocab_file, corpus_file, data_path)
             else:
-                print 'loading vocab and processing data'
+                print('loading vocab and processing data')
                 self.load_preprocessed(vocab_file, data_path)
 
         elif vocab is not None and labels is not None:
@@ -50,13 +54,14 @@ class TextLoader(object):
 
 
     def transform(self, d):
+        d = list(d)
         new_d = map(self.vocab.get, d[:self.seq_length])
-        new_d = map(lambda i: i if i else 0, new_d)
-
-        if len(new_d) >= self.seq_length:
+        new_d = list(map(lambda i: i if i else 0, new_d))  # 转换为vocab中对于的index
+        
+        if len(list(new_d)) >= self.seq_length:
             new_d = new_d[:self.seq_length]
         else:
-            new_d = new_d + [0] * (self.seq_length - len(new_d))
+            new_d = list(new_d) + [0] * (self.seq_length - len(list(new_d)))
         return new_d
 
 
@@ -72,7 +77,7 @@ class TextLoader(object):
             pass
 
         counter = collections.Counter(corpus)
-        count_pairs = sorted(counter.items(), key=lambda i: -i[1])
+        count_pairs = sorted(counter.items(), key=lambda i: -i[1]) # 逆序排列
         self.chars, _ = zip(*count_pairs)
         with open(vocab_file, 'wb') as f:
             pickle.dump(self.chars, f)

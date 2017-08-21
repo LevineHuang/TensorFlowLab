@@ -5,7 +5,8 @@ import os, sys
 import time
 import csv
 import argparse
-import cPickle as pickle
+# import cPickle as pickle
+import pickle 
 
 import numpy as np
 import pandas as pd
@@ -101,18 +102,18 @@ def cross_validation(args):
                     feed = {model.input_data: x, model.targets: y}
                     train_loss, state, _, accuracy = sess.run([model.cost, model.final_state, model.optimizer, model.accuracy], feed_dict=feed)
                     end = time.time()
-                    print '{}/{} (epoch {}), train_loss = {:.3f}, accuracy = {:.3f}, time/batch = {:.3f}'\
+                    print('{}/{} (epoch {}), train_loss = {:.3f}, accuracy = {:.3f}, time/batch = {:.3f}'\
                         .format(e * data_loader.num_batches + b + 1,
                                 args.num_epochs * data_loader.num_batches,
                                 e + 1,
                                 train_loss,
                                 accuracy,
-                                end - start)
+                                end - start))
                     if (e*data_loader.num_batches+b+1) % args.save_every == 0 \
                         or (e==args.num_epochs-1 and b==data_loader.num_batches-1):
                         checkpoint_path = os.path.join(args.save_dir, 'model.ckpt')
                         saver.save(sess, checkpoint_path, global_step=e*data_loader.num_batches+b+1)
-                        print 'model saved to {}'.format(checkpoint_path)
+                        print('model saved to {}'.format(checkpoint_path))
 
             n_chunks = len(test_data) / args.batch_size
             if len(test_data) % args.batch_size:
@@ -134,10 +135,10 @@ def cross_validation(args):
 
             accuracy_total = correct_total / num_total
             accuracy_list.append(accuracy_total)
-            print 'total_num = {}, total_accuracy = {:.6f}'.format(int(num_total), accuracy_total)
+            print('total_num = {}, total_accuracy = {:.6f}'.format(int(num_total), accuracy_total))
 
     accuracy_average = np.average(accuracy_list)
-    print 'The average accuracy of cross_validation is {}'.format(accuracy_average)
+    print('The average accuracy of cross_validation is {}'.format(accuracy_average))
 
 
 

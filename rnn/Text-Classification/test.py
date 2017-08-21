@@ -5,7 +5,8 @@ import os, sys
 import time
 import csv
 import argparse
-import cPickle as pickle
+# import cPickle as pickle
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -77,7 +78,7 @@ def sample(args):
         ckpt = tf.train.get_checkpoint_state(args.save_dir)
         if ckpt and ckpt.model_checkpoint_path:
             saver.restore(sess, ckpt.model_checkpoint_path)
-            print model.predict_label(sess, labels, [x])
+            print(model.predict_label(sess, labels, [x]))
 
 
 def predict(args):
@@ -106,7 +107,7 @@ def predict(args):
         start = time.time()
         results = model.predict_label(sess, labels, x)
         end = time.time()
-        print 'prediction costs time: ', end - start
+        print('prediction costs time: ', end - start)
 
     with open(args.result_path, 'w') as f:
         writer = csv.writer(f)
@@ -145,13 +146,13 @@ def accuracy(args):
             results = model.predict_class(sess, x)
             correct_num = np.sum(results==y)
             end = time.time()
-            print 'batch {}/{} cost time {:.3f}, sub_accuracy = {:.6f}'.format(m+1, n_chunks, end-start, correct_num*1.0/len(x))
+            print('batch {}/{} cost time {:.3f}, sub_accuracy = {:.6f}'.format(m+1, n_chunks, end-start, correct_num*1.0/len(x)))
 
             correct_total += correct_num
             num_total += len(x)
 
         accuracy_total = correct_total / num_total
-        print 'total_num = {}, total_accuracy = {:.6f}'.format(int(num_total), accuracy_total)
+        print('total_num = {}, total_accuracy = {:.6f}'.format(int(num_total), accuracy_total))
 
 
 
