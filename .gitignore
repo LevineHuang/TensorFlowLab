@@ -2,3 +2,6 @@
 rnn/Text-Classification/save/
 rnn/Text-Classification/*.pyc
 data/
+
+.ipynb_checkpoints/
+logs/
